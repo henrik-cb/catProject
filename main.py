@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 #import relevant
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
-import pyaudio
-import wave
+#import pyaudio
+#import wave
 import subprocess
 from scipy.fftpack import fft
 from scipy.io import wavfile
@@ -15,7 +15,7 @@ import numpy
 
 def snapshot(filename):
     print('Taking picture')
-    bashCommand = "fswebcam -r 1280x720 {}.jpg".format('/home/pi/Documents/CatProject/'+filename)
+    bashCommand = "fswebcam -S 10 -r 1280x720 {}.jpg".format('/home/pi/Documents/CatProject/'+filename)
     subprocess.run(bashCommand.split())
 
 
@@ -35,14 +35,14 @@ def testSound(filename):
     wavPart = data
     wavNormalised=[(ele/2**8.)*2-1 for ele in wavPart] # this is 8-bit track, b is now normalized on [-1,1)
     wavFFT = fft(wavNormalised) # calculate fourier transform (complex numbers list)
-    lenWav = wavFFT.size
+    lenWav = round(wavFFT.size/2)
     realFFT = abs(wavFFT[:(lenWav - 1)])   # you only need half of the fft list (real signal symmetry)
 
     #TODO match d with prerecorded
 
     #log files for training of algorithm
-    numpy.savetxt(filename + 'WAV.txt',wavNormalised)
-    numpy.savetxt(filename + 'FFT.txt',realFFT)
+    numpy.savetxt(filename + 'WAV.csv',wavNormalised)
+    numpy.savetxt(filename + 'FFT.csv',realFFT)
 
     return False
 
